@@ -1,0 +1,24 @@
+[Unit]
+Description=nginx container
+After=forgejo.service
+After=anubis.service
+
+[Container]
+Pod=forgejo.pod
+ContainerName=nginx
+Image=localhost/kura-nginx:latest
+Label=io.containers.autoupdate=registry
+
+Volume=/docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+Volume=/docker/nginx/cache:/var/cache/nginx
+Volume=/docker/nginx/custom/:/var/www/html:ro
+
+Environment=PUID=1000
+Environment=PGID=1000
+Environment=TZ=Etc/UTC
+
+[Service]
+Restart=unless-stopped
+
+[Install]
+WantedBy=default.target

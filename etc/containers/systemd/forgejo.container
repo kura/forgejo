@@ -1,0 +1,21 @@
+[Unit]
+Description=Forgejo container
+After=anubis.service
+
+[Container]
+Pod=forgejo.pod
+ContainerName=forgejo
+Image=localhost/kura-forgejo:latest
+Label=io.containers.autoupdate=registry
+
+Volume=/docker/forgejo:/data
+
+Environment=PUID=1000
+Environment=PGID=1000
+Environment=TZ=Etc/UTC
+
+[Service]
+Restart=unless-stopped
+
+[Install]
+WantedBy=default.target

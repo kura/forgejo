@@ -1,0 +1,11 @@
+Package: podman buildah golang-github-containers-common crun libgpgme11t64 libgpg-error0 golang-github-containers-image catatonit conmon containers-storage
+Pin: release n=plucky-proposed
+Pin-Priority: 990
+
+Package: libsubid4 netavark
+Pin: release n=plucky
+Pin-Priority: 990
+
+Package: *
+Pin: release n=plucky
+Pin-Priority: 400

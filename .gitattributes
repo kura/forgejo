@@ -1,0 +1,6 @@
+*.pref linguist-language=INI
+*.sources linguist-language=INI
+*.conf linguist-language=INI
+*.container linguist-language=INI
+*.network linguist-language=INI
+*.pod linguist-language=INI
