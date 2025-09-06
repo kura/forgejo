@@ -1,5 +1,5 @@
 [Pod]
-PodName=Forgejo
+PodName=forgejo
 Network=forgejo.network
 PublishPort=22:22
 PublishPort=80:80

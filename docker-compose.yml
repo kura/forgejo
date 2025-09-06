@@ -1,0 +1,107 @@
+services:
+
+  forgejo:
+    image: kura-forgejo:latest
+    container_name: forgejo
+    hostname: forgejo
+    depends_on:
+      - anubis
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /docker/forgejo:/data
+    labels:
+      - "autoheal=true"
+      - "com.centurylinklabs.watchtower.enable=false"
+    ports:
+      - 3000:3000
+      - 22:22
+    networks:
+      - forgejo
+    restart: always
+    healthcheck:
+      test: curl --fail http://localhost:3000 || exit 1
+      interval: 60s
+      retries: 5
+      start_period: 20s
+      timeout: 10s
+
+  anubis:
+    image: ghcr.io/techarohq/anubis:latest
+    container_name: anubis
+    hostname: anubis
+    environment:
+      - TZ=Etc/UTC
+      - BIND=:8080
+      - DIFFICULTY=4
+      - SERVE_ROBOTS_TXT=true
+      - TARGET=http://forgejo:3000
+      - POLICY_FNAME=/data/cfg/botPolicy.yaml
+      - OG_PASSTHROUGH=true
+      - OG_EXPIRY_TIME=24h
+      - REDIRECT_DOMAINS=gitea,git.kura.gg
+      - USE_SIMPLIFIED_EXPLANATION=true
+    volumes:
+      - /docker/anubis/botPolicy.yaml:/data/cfg/botPolicy.yaml:ro
+    labels:
+      - "autoheal=true"
+    ports:
+      - 8080:8080
+    networks:
+      - forgejo
+    restart: always
+    healthcheck:
+      test: ["CMD", "anubis", "--healthcheck"]
+      interval: 5s
+      timeout: 30s
+      retries: 5
+      start_period: 500ms
+
+  nginx:
+    image: kura-nginx:latest
+    container_name: nginx
+    hostname: nginx
+    depends_on:
+      - anubis
+      - forgejo
+    environment:
+      - TZ=Etc/UTC
+    volumes:
+      - /docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /docker/nginx/cache:/var/cache/nginx
+      - /docker/nginx/custom/:/var/www/html:ro
+    labels:
+      - "autoheal=true"
+      - "com.centurylinklabs.watchtower.enable=false"
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - forgejo
+    restart: always
+    healthcheck:
+      test: curl --fail http://localhost || exit 1
+      interval: 60s
+      retries: 5
+      start_period: 20s
+      timeout: 10s
+
+  watchtower:
+    image: ghcr.io/containrrr/watchtower:latest
+    container_name: watchtower
+    hostname: watchtower
+    environment:
+      - TZ=Etc/UTC
+      - WATCHTOWER_SCHEDULE=0 0 5 * * MON
+      - WATCHTOWER_NOTIFICATIONS=email
+      - WATCHTOWER_CLEANUP=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "autoheal=true"
+    restart: always
+
+networks:
+  forgejo:

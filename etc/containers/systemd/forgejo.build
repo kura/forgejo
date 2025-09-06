@@ -1,0 +1,6 @@
+[Unit]
+Description=forgejo image builder
+
+[Build]
+File=/data/Containerfile.forgejo
+ImageTag=localhost/kura-forgejo:latest

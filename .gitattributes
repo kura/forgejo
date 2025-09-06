@@ -1,6 +1,51 @@
-*.pref linguist-language=INI
-*.sources linguist-language=INI
-*.conf linguist-language=INI
-*.container linguist-language=INI
-*.network linguist-language=INI
-*.pod linguist-language=INI
+* text=auto
+
+*.gitattributes text
+*.gitignore text
+
+*.gitattributes export-ignore
+*.gitignore export-ignore
+
+*.gitattributes linguist-language=git-attributes
+*.gitattributes linguist-detectable=true
+*.gitattributes linguist-documentation=false
+
+*.gitignore linguist-language=git-attributes
+*.gitignore linguist-detectable=true
+*.gitignore linguist-documentation=false
+
+*.pref linguist-language=ini
+*.pref linguist-detectable=true
+*.pref linguist-documentation=false
+
+*.sources linguist-language=ini
+*.sources linguist-detectable=true
+*.sources linguist-documentation=false
+
+*.build linguist-language=toml
+*.build linguist-detectable=true
+*.build linguist-documentation=false
+
+*.conf linguist-language=toml
+*.conf linguist-detectable=true
+*.conf linguist-documentation=false
+
+*.container linguist-language=toml
+*.container linguist-detectable=true
+*.container linguist-documentation=false
+
+*.network linguist-language=toml
+*.network linguist-detectable=true
+*.network linguist-documentation=false
+
+*.pod linguist-language=toml
+*.pod linguist-detectable=true
+*.pod linguist-documentation=false
+
+*.volume linguist-language=toml
+*.volume linguist-detectable=true
+*.volume linguist-documentation=false
+
+Containerfile.* linguist-language=dockerfile
+Containerfile.* linguist-detectable=true
+Containerfile.* linguist-documentation=false

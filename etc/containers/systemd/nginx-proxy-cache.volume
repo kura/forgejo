@@ -1,0 +1,4 @@
+[Unit]
+Description=nginx proxy_cache volume
+
+[Volume]

@@ -1,18 +1,27 @@
 [Unit]
 Description=Forgejo container
+After=forgejo-pod.service
+After=forgejo-network.service
 After=anubis.service
+After=nginx.service
 
 [Container]
 Pod=forgejo.pod
 ContainerName=forgejo
-Image=localhost/kura-forgejo:latest
-Label=io.containers.autoupdate=registry
+Image=forgejo.build
+AutoUpdate=local
 
-Volume=/docker/forgejo:/data
+Volume=/data/forgejo:/data
 
 Environment=PUID=1000
 Environment=PGID=1000
 Environment=TZ=Etc/UTC
+
+HealthCmd="curl --fail http://localhost:3000 || exit 1"
+HealthInterval=60s
+HealthRetries=5
+HealthTimeout=10s
+HealthStartPeriod=10s
 
 [Service]
 Restart=unless-stopped

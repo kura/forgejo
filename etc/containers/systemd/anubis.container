@@ -1,14 +1,16 @@
 [Unit]
 Description=Anubis container
 After=network.target
+After=forgejo-pod.service
+After=forgejo-network.service
 
 [Container]
 Pod=forgejo.pod
 ContainerName=anubis
 Image=ghcr.io/techarohq/anubis:latest
-Label=io.containers.autoupdate=registry
+AutoUpdate=registry
 
-Volume=/docker/anubis/botPolicy.yaml:/data/cfg/botPolicy.yaml:ro
+Volume=/data/anubis/botPolicy.yaml:/data/cfg/botPolicy.yaml:ro
 
 Environment=TZ=Etc/UTC
 Environment=BIND=:8080
@@ -20,6 +22,12 @@ Environment=OG_PASSTHROUGH=true
 Environment=OG_EXPIRY_TIME=24h
 Environment=REDIRECT_DOMAINS=git.kura.gg
 Environment=USE_SIMPLIFIED_EXPLANATION=true
+
+#HealthCmd="anubis --healthcheck"
+#HealthInterval=60s
+#HealthRetries=5
+#HealthTimeout=30s
+#HealthStartPeriod=1s
 
 [Service]
 Restart=unless-stopped
