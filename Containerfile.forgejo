@@ -11,12 +11,13 @@ RUN apk --no-cache add \
     pandoc \
     python3-dev \
     py3-pyzmq \
-    pipx \
+    py3-pip \
+    py3-wheel \
     && \
     rm -rf /var/cache/apk/*
-RUN pipx install \
+
+RUN python3 -m pip install --no-input --break-system-packages --root-user-action=ignore \
     jupyter \
     docutils \
-    --include-deps --global \
     && \
     rm -rf /root/.cache
