@@ -1,18 +1,16 @@
 * text=auto
 
-*.gitattributes text
-*.gitignore text
+.gitattributes export-ignore
+.gitattributes linguist-language=git-attributes
+.gitattributes linguist-detectable=false
+.gitattributes linguist-documentation=false
+.gitattributes linguist-vendored=true
 
-*.gitattributes export-ignore
-*.gitignore export-ignore
-
-*.gitattributes linguist-language=git-attributes
-*.gitattributes linguist-detectable=true
-*.gitattributes linguist-documentation=false
-
-*.gitignore linguist-language=git-attributes
-*.gitignore linguist-detectable=true
-*.gitignore linguist-documentation=false
+.gitignore export-ignore
+.gitignore linguist-language=git-attributes
+.gitignore linguist-detectable=false
+.gitignore linguist-documentation=false
+.gitignore linguist-vendored=true
 
 *.pref linguist-language=ini
 *.pref linguist-detectable=true
@@ -49,3 +47,7 @@
 Containerfile.* linguist-language=dockerfile
 Containerfile.* linguist-detectable=true
 Containerfile.* linguist-documentation=false
+
+update-forgejo-containerfile linguist-language=bash
+update-forgejo-containerfile linguist-detectable=true
+update-forgejo-containerfile linguist-documentation=false
