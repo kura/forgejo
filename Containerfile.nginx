@@ -5,11 +5,8 @@ RUN apk --no-cache add \
     curl \
     ca-certificates
 
-RUN printf "%s%s%s%s\n" \
-    "@nginx " \
-    "http://nginx.org/packages/mainline/alpine/v" \
-    $(egrep -o '^[0-9]+\.[0-9]+' /etc/alpine-release) \
-    "/main" \
+RUN printf "@nginx http://nginx.org/packages/mainline/alpine/%s/main" \
+    "v$(egrep -o '^[0-9]+\.[0-9]+' /etc/alpine-release)" \
     >> /etc/apk/repositories
 
 RUN curl -o /etc/apk/keys/nginx_signing.rsa.pub https://nginx.org/keys/nginx_signing.rsa.pub

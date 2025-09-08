@@ -1,4 +1,5 @@
 #!/usr/bin/bash
+if ! command -v jq > /dev/null || ! command -v curl > /dev/null; then echo "Please install curl and jq" && exit 1; fi
 JSON=$(curl -s -H "Accept: application/json" "https://codeberg.org/api/v1/packages/forgejo?type=container")
 version=$(echo "$JSON" | jq -r '.[].version' | grep -vE "(sha256|rootless)" | sort | tail -1)
 sed -i -re "s/(forgejo\/forgejo)\:.*/\1:$version/gi" /data/Containerfile.forgejo
