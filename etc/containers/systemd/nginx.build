@@ -4,11 +4,4 @@ Description=nginx image builder
 [Build]
 File=/data/Containerfile.nginx
 ImageTag=localhost/kura-nginx:latest
-
-[Timer]
-OnCalendar=daily
-RandomizedDelaySec=900
-Persistent=true
-
-[Install]
-WantedBy=timers.target
+Pull=newer

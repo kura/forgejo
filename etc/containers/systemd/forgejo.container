@@ -2,8 +2,6 @@
 Description=Forgejo container
 After=forgejo-pod.service
 After=forgejo-network.service
-After=anubis.service
-After=nginx.service
 
 [Container]
 Pod=forgejo.pod

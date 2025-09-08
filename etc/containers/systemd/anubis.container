@@ -3,6 +3,7 @@ Description=Anubis container
 After=network.target
 After=forgejo-pod.service
 After=forgejo-network.service
+After=forgejo.service
 
 [Container]
 Pod=forgejo.pod

@@ -1,0 +1,12 @@
+[Unit]
+Description=nginx image update
+Wants=network-online.target
+After=network-online.target
+
+[Timer]
+OnCalendar=daily
+RandomizedDelaySec=900
+Persistent=true
+
+[Install]
+WantedBy=default.target

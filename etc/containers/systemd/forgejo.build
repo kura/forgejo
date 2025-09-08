@@ -4,3 +4,7 @@ Description=forgejo image builder
 [Build]
 File=/data/Containerfile.forgejo
 ImageTag=localhost/kura-forgejo:latest
+Pull=newer
+
+[Service]
+ExecStartPre=/data/update-forgejo-containerfile
