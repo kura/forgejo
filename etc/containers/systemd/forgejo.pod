@@ -7,9 +7,3 @@ Network=forgejo.network
 PublishPort=22:22
 PublishPort=80:80
 PublishPort=443:443
-
-[Service]
-Restart=unless-stopped
-
-[Install]
-WantedBy=default.target

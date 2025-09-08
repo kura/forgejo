@@ -3,9 +3,3 @@ Description=Forgejo network
 
 [Network]
 Driver=bridge
-
-[Service]
-Restart=unless-stopped
-
-[Install]
-WantedBy=default.target
