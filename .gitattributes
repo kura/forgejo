@@ -51,3 +51,7 @@ Containerfile.* linguist-documentation=false
 update-forgejo-containerfile linguist-language=bash
 update-forgejo-containerfile linguist-detectable=true
 update-forgejo-containerfile linguist-documentation=false
+
+nginx.conf linguist-language=nginx
+nginx.conf linguist-detectable=true
+nginx.conf linguist-documentation=false
