@@ -3,3 +3,4 @@ Description=Forgejo network
 
 [Network]
 Driver=bridge
+IPv6=true
