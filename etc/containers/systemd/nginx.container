@@ -11,6 +11,7 @@ Image=nginx.build
 AutoUpdate=local
 
 Volume=/data/nginx/nginx.conf:/etc/nginx/nginx.conf
+Volume=/data/nginx/git.kura.gg.pem.ech:/etc/nginx/git.kura.gg.pem.ech:ro
 Volume=nginx-acme-letsencrypt.volume:/var/cache/nginx/acme-letsencrypt
 Volume=nginx-proxy-cache.volume:/var/cache/nginx/proxy_cache
 

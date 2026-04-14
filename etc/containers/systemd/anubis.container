@@ -15,7 +15,7 @@ Volume=/data/anubis/botPolicy.yaml:/data/cfg/botPolicy.yaml:ro
 
 Environment=TZ=Etc/UTC
 Environment=BIND=:8080
-Environment=DIFFICULTY=4
+Environment=DIFFICULTY=5
 Environment=SERVE_ROBOTS_TXT=true
 Environment=TARGET=http://forgejo:3000
 Environment=POLICY_FNAME=/data/cfg/botPolicy.yaml
