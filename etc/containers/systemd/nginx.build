@@ -5,3 +5,6 @@ Description=nginx image builder
 File=/data/nginx/Containerfile
 ImageTag=localhost/kura-nginx:latest
 Pull=newer
+
+[Service]
+ExecStartPre=/data/nginx/update-nginx-containerfile
