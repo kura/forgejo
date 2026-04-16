@@ -2,9 +2,9 @@
 Description=forgejo image builder
 
 [Build]
-File=/data/Containerfile.forgejo
+File=/data/forgejo/Containerfile
 ImageTag=localhost/kura-forgejo:latest
 Pull=newer
 
 [Service]
-ExecStartPre=/data/update-forgejo-containerfile
+ExecStartPre=/data/forgejo/update-forgejo-containerfile

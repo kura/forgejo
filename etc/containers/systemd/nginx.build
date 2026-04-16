@@ -2,6 +2,6 @@
 Description=nginx image builder
 
 [Build]
-File=/data/Containerfile.nginx
+File=/data/nginx/Containerfile
 ImageTag=localhost/kura-nginx:latest
 Pull=newer
