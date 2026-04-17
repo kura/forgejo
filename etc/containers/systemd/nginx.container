@@ -19,7 +19,7 @@ Environment=PUID=1000
 Environment=PGID=1000
 Environment=TZ=Etc/UTC
 
-HealthCmd="curl --fail http://localhost || exit 1"
+HealthCmd="curl --fail http://localhost/status || exit 1"
 HealthInterval=60s
 HealthRetries=5
 HealthStartPeriod=20s
