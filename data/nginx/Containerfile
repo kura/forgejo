@@ -103,6 +103,7 @@ RUN apk add --no-cache --virtual .runtime-deps \
         --add-dynamic-module=../zstd-nginx-module-${ZSTD_VERSION} \
         --add-dynamic-module=../nginx-acme-${ACME_VERSION} \
         --add-dynamic-module=../naxsi_src \
+        --with-cc-opt='-O3 -g -pipe -Wall' \
     && make -j"$(nproc)" \
     && make modules \
     && make install \
