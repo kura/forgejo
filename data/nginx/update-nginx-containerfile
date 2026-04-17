@@ -3,4 +3,5 @@ if ! command -v jq > /dev/null || ! command -v curl > /dev/null; then echo "Plea
 openssl=$(curl -s https://api.github.com/repos/openssl/openssl/releases | jq -r '.[0].tag_name' | cut -d'v' -f 2 | tr -d '[:alpha:][=-=]')
 nginx=$(curl -s https://api.github.com/repos/nginx/nginx/releases | jq -r '.[0].tag_name' | cut -d'v' -f 2 | tr -d '[:alpha:][=-=]')
 acme=$(curl -s https://api.github.com/repos/nginx/nginx-acme/releases | jq -r '.[0].tag_name' | cut -d'v' -f 2 | tr -d '[:alpha:][=-=]')
-sed -i -re "s/(ENV OPENSSL_VERSION)\ .*/\1 $openssl/g;s/(ENV NGINX_VERSION)\ .*/\1 $nginx/g;s/(ENV ACME_VERSION)\ .*/\1 $acme/g" /data/nginx/Containerfile
+naxsi=$(curl -s https://api.github.com/repos/wargio/naxsi/releases | jq -r '.[0].tag_name' | cut -d'v' -f 2 | tr -d '[:alpha:][=-=]')
+sed -i -re "s/(ENV OPENSSL_VERSION)\ .*/\1 $openssl/g;s/(ENV NGINX_VERSION)\ .*/\1 $nginx/g;s/(ENV ACME_VERSION)\ .*/\1 $acme/g;s/(ENV NAXSI_VERSION)\ .*/\1 $naxsi/g" /data/nginx/Containerfile
