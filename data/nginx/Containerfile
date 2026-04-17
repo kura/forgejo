@@ -1,37 +1,73 @@
 FROM nginx:mainline-alpine-slim
 
+ENV OPENSSL_VERSION 4.0.0
 ENV BROTLI_VERSION 1.0.0
 ENV ZSTD_VERSION 0.1.1
 ENV ACME_VERSION 0.3.1
 
-RUN apk add --no-cache curl \
-    && apk add --no-cache --virtual .build-deps \
-        gcc \
-        libc-dev \
-        make \
-        openssl-dev \
-        pcre2-dev \
-        zlib-dev \
-        linux-headers \
-        bash \
-        cargo \
-        clang-libclang \
-        brotli-dev \
-        zstd-dev
+RUN apk add --no-cache --virtual .runtime-deps \
+    curl \
+    libgcc \
+    musl \
+    pcre2 \
+    zlib \
+    brotli-libs \
+    zstd-libs
+
+RUN apk add --no-cache --virtual .build-deps \
+    perl \
+    alpine-sdk \
+    gcc \
+    libc-dev \
+    make \
+    pcre2-dev \
+    zlib-dev \
+    linux-headers \
+    bash \
+    cargo \
+    clang-libclang \
+    brotli-dev \
+    zstd-dev
+
 RUN set -x \
-  && tempDir="$(mktemp -d)" \
-  && export HOME=${tempDir} \
-  && cd ${tempDir} \
-  && curl -LO https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
-  && tar xvzf nginx-${NGINX_VERSION}.tar.gz \
-  && curl -LO https://github.com/google/ngx_brotli/archive/refs/tags/v${BROTLI_VERSION}rc.tar.gz \
-  && tar xvzf v${BROTLI_VERSION}rc.tar.gz \
-  && curl -LO https://github.com/tokers/zstd-nginx-module/archive/refs/tags/${ZSTD_VERSION}.tar.gz \
-  && tar xvzf ${ZSTD_VERSION}.tar.gz \
-  && curl -LO https://github.com/nginx/nginx-acme/releases/download/v${ACME_VERSION}/nginx-acme-${ACME_VERSION}.tar.gz \
-  && tar xvzf nginx-acme-${ACME_VERSION}.tar.gz \
-  && cd nginx-${NGINX_VERSION} \
-  && ./configure \
+    && tempDir="$(mktemp -d)" \
+    && export HOME=${tempDir} \
+    && cd ${tempDir} \
+    && curl -L \
+        -O https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_VERSION}/openssl-${OPENSSL_VERSION}.tar.gz \
+        -O https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
+        -O https://github.com/google/ngx_brotli/archive/refs/tags/v${BROTLI_VERSION}rc.tar.gz \
+        -O https://github.com/tokers/zstd-nginx-module/archive/refs/tags/${ZSTD_VERSION}.tar.gz \
+        -O https://github.com/nginx/nginx-acme/releases/download/v${ACME_VERSION}/nginx-acme-${ACME_VERSION}.tar.gz \
+    && cat * | tar xvzf - -i \
+    && cd openssl-${OPENSSL_VERSION} \
+    && perl ./Configure \
+        --prefix=/usr \
+        --libdir=lib \
+        --openssldir=/etc/ssl \
+        enable-fips \
+        enable-ktls \
+        shared \
+        no-zlib \
+        no-async \
+        no-comp \
+        no-idea \
+        no-mdc2 \
+        no-rc5 \
+        no-ec2m \
+        no-ssl3 \
+        no-seed \
+        no-weak-ssl-ciphers \
+        no-docs \
+        no-tests \
+        -Wa,--noexecstack \
+    && make -j"$(nproc)" \
+    && make install \
+    && cd ${tempDir} \
+    && rm nginx-acme-${ACME_VERSION}/Cargo.lock \
+    && sed -i 's|openssl = { version = "0.10.74"|openssl = { git = "https://github.com/rust-openssl/rust-openssl.git"|g;s|openssl-sys = { version = "0.9.110"|openssl-sys = { git = "https://github.com/rust-openssl/rust-openssl.git"|g' nginx-acme-${ACME_VERSION}/Cargo.toml \
+    && cd nginx-${NGINX_VERSION} \
+    && ./configure \
         --prefix=/etc/nginx \
         --sbin-path=/usr/sbin/nginx \
         --modules-path=/usr/lib/nginx/modules \
@@ -64,11 +100,17 @@ RUN set -x \
         --add-dynamic-module=../ngx_brotli-${BROTLI_VERSION}rc \
         --add-dynamic-module=../zstd-nginx-module-${ZSTD_VERSION} \
         --add-dynamic-module=../nginx-acme-${ACME_VERSION} \
-  && make \
-  && make modules \
-  && make install \
-  && cd /etc/nginx \
-  && rm -rf conf.d fastcgi* html koi* *.default scgi* uwsgi* win-utf \
-  && cd / \
-  && rm -rf ${tempDir} \
-
+    && make -j"$(nproc)" \
+    && make modules \
+    && make install \
+    && cd /etc/nginx \
+    && echo "    default 0;" > ai-ua.map \
+    && curl -sL https://raw.githubusercontent.com/ai-robots-txt/ai.robots.txt/refs/heads/main/robots.txt | \
+        grep -v Disallow | \
+        cut -d' ' -f2 | \
+        tr '[:upper:]' '[:lower:]' | \
+        while read u; do echo "~*$u* 1;" >> ai-ua.map; done \
+    && rm -rf conf.d fastcgi* html koi* *.default scgi* uwsgi* win-utf \
+    && cd / \
+    && apk del --no-network .build-deps \
+    && rm -rf ${tempDir} \
