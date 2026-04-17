@@ -1,4 +1,6 @@
 #!/usr/bin/bash
 if ! command -v jq > /dev/null || ! command -v curl > /dev/null; then echo "Please install curl and jq" && exit 1; fi
-version=$(curl -s https://api.github.com/repos/nginx/nginx-acme/releases | jq -r '.[0].tag_name' | cut -d'v' -f 2)
-sed -i -re "s/(ENV ACME_VERSION)\ .*/\1 $version/gi" /data/nginx/Containerfile
+openssl=$(curl -s https://api.github.com/repos/openssl/openssl/releases | jq -r '.[0].tag_name' | cut -d'v' -f 2 | tr -d '[:alpha:][=-=]')
+nginx=$(curl -s https://api.github.com/repos/nginx/nginx/releases | jq -r '.[0].tag_name' | cut -d'v' -f 2 | tr -d '[:alpha:][=-=]')
+acme=$(curl -s https://api.github.com/repos/nginx/nginx-acme/releases | jq -r '.[0].tag_name' | cut -d'v' -f 2 | tr -d '[:alpha:][=-=]')
+sed -i -re "s/(ENV OPENSSL_VERSION)\ .*/\1 $openssl/g;s/(ENV NGINX_VERSION)\ .*/\1 $nginx/g;s/(ENV ACME_VERSION)\ .*/\1 $acme/g" /data/nginx/Containerfile
