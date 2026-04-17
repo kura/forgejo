@@ -105,7 +105,6 @@ RUN set -x \
     && make modules \
     && make install \
     && cd /etc/nginx \
-    && echo "    default 0;" > ai-ua.map \
     && curl -sL https://raw.githubusercontent.com/ai-robots-txt/ai.robots.txt/refs/heads/main/robots.txt | \
         grep -v Disallow | \
         cut -d' ' -f2 | \
