@@ -1,7 +1,5 @@
 [Unit]
 Description=Forgejo container
-After=forgejo-pod.service
-After=forgejo-network.service
 
 [Container]
 Pod=forgejo.pod
