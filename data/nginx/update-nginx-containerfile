@@ -1,7 +1,11 @@
 #!/usr/bin/bash
 if ! command -v jq > /dev/null || ! command -v curl > /dev/null; then echo "Please install curl and jq" && exit 1; fi
-openssl=$(curl -s https://api.github.com/repos/openssl/openssl/releases | jq -r '.[0].tag_name' | cut -d'v' -f 2 | tr -d '[:alpha:][=-=]')
+openssl=$(curl -s https://api.github.com/repos/openssl/openssl/releases 2>&1 /dev/null | jq -r '.[0].tag_name' | cut -d'v' -f 2 | tr -d '[:alpha:][=-=]')
+if [ $? -eq 0 ]; then exit 0; fi
 nginx=$(curl -s https://api.github.com/repos/nginx/nginx/releases | jq -r '.[0].tag_name' | cut -d'v' -f 2 | tr -d '[:alpha:][=-=]')
+if [ $? -eq 0 ]; then exit 0; fi
 acme=$(curl -s https://api.github.com/repos/nginx/nginx-acme/releases | jq -r '.[0].tag_name' | cut -d'v' -f 2 | tr -d '[:alpha:][=-=]')
+if [ $? -eq 0 ]; then exit 0; fi
 naxsi=$(curl -s https://api.github.com/repos/wargio/naxsi/releases | jq -r '.[0].tag_name' | cut -d'v' -f 2 | tr -d '[:alpha:][=-=]')
+if [ $? -eq 0 ]; then exit 0; fi
 sed -i -re "s/(ENV OPENSSL_VERSION)\ .*/\1 $openssl/g;s/(ENV NGINX_VERSION)\ .*/\1 $nginx/g;s/(ENV ACME_VERSION)\ .*/\1 $acme/g;s/(ENV NAXSI_VERSION)\ .*/\1 $naxsi/g" /data/nginx/Containerfile
