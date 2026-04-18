@@ -33,15 +33,15 @@ RUN apk add --no-cache --virtual .runtime-deps \
     && tempDir="$(mktemp -d)" \
     && cd ${tempDir} \
     && curl -L \
-        -O https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_VERSION}/openssl-${OPENSSL_VERSION}.tar.gz \
-        -O https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
-        -O https://github.com/google/ngx_brotli/archive/refs/tags/v${BROTLI_VERSION}rc.tar.gz \
-        -O https://github.com/tokers/zstd-nginx-module/archive/refs/tags/${ZSTD_VERSION}.tar.gz \
-        -O https://github.com/nginx/nginx-acme/releases/download/v${ACME_VERSION}/nginx-acme-${ACME_VERSION}.tar.gz \
-        -O https://github.com/wargio/naxsi/releases/download/${NAXSI_VERSION}/naxsi-${NAXSI_VERSION}-src-with-deps.tar.gz \
+        -o openssl-${OPENSSL_VERSION}.tar.gz https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_VERSION}/openssl-${OPENSSL_VERSION}.tar.gz \
+        -o nginx-${NGINX_VERSION}.tar.gz https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
+        -o brotli-${BROTLI_VERSION}.tar.gz https://github.com/google/ngx_brotli/archive/refs/tags/v${BROTLI_VERSION}rc.tar.gz \
+        -o zstd-${ZSTD_VERSION}.tar.gz https://github.com/tokers/zstd-nginx-module/archive/refs/tags/${ZSTD_VERSION}.tar.gz \
+        -o acme-${ACME_VERSION}.tar.gz https://github.com/nginx/nginx-acme/releases/download/v${ACME_VERSION}/nginx-acme-${ACME_VERSION}.tar.gz \
+        -o naxsi-${NAXSI_VERSION}.tar.gz https://github.com/wargio/naxsi/releases/download/${NAXSI_VERSION}/naxsi-${NAXSI_VERSION}-src-with-deps.tar.gz \
         -o ngx_dynamic_tls_records_1.29.patch https://raw.githubusercontent.com/nginx-modules/ngx_http_tls_dyn_size/refs/heads/master/nginx__dynamic_tls_records_1.29.2%2B.patch \
-    && cat *.tar.gz | tar xvzf - -i \
-    && cd openssl-${OPENSSL_VERSION} \
+    && cat ${tempDir}/*.tar.gz | tar xvzf - -i \
+    && cd ${tempDir}/openssl-${OPENSSL_VERSION} \
     && perl ./Configure \
         --prefix=/usr \
         --libdir=lib \
@@ -61,14 +61,13 @@ RUN apk add --no-cache --virtual .runtime-deps \
         no-weak-ssl-ciphers \
         no-docs \
         no-tests \
-        -Wa,--noexecstack \
-    && make -j"$(nproc)" \
+        -O3 -g -pipe -Wa,--noexecstack \
+    && make -j$(nproc) \
     && make install \
-    && cd ${tempDir} \
-    && rm nginx-acme-${ACME_VERSION}/Cargo.lock \
-    && sed -i 's|openssl = { version = "0.10.74"|openssl = { git = "https://github.com/rust-openssl/rust-openssl.git"|g;s|openssl-sys = { version = "0.9.110"|openssl-sys = { git = "https://github.com/rust-openssl/rust-openssl.git"|g' nginx-acme-${ACME_VERSION}/Cargo.toml \
-    && cd nginx-${NGINX_VERSION} \
-    && patch -p1 < ../ngx_dynamic_tls_records_1.29.patch \
+    && rm ${tempDir}/nginx-acme-${ACME_VERSION}/Cargo.lock \
+    && sed -i 's|openssl = { version = "0.10.74"|openssl = { git = "https://github.com/rust-openssl/rust-openssl.git"|g;s|openssl-sys = { version = "0.9.110"|openssl-sys = { git = "https://github.com/rust-openssl/rust-openssl.git"|g' ${tempDir}/nginx-acme-${ACME_VERSION}/Cargo.toml \
+    && cd ${tempDir}/nginx-${NGINX_VERSION} \
+    && patch -p1 < ${tempDir}/ngx_dynamic_tls_records_1.29.patch \
     && ./configure \
         --prefix=/etc/nginx \
         --sbin-path=/usr/sbin/nginx \
@@ -99,13 +98,13 @@ RUN apk add --no-cache --virtual .runtime-deps \
         --with-stream_realip_module \
         --with-stream_ssl_module \
         --with-stream_ssl_preread_module \
-        --add-dynamic-module=../ngx_brotli-${BROTLI_VERSION}rc \
-        --add-dynamic-module=../zstd-nginx-module-${ZSTD_VERSION} \
-        --add-dynamic-module=../nginx-acme-${ACME_VERSION} \
-        --add-dynamic-module=../naxsi_src \
+        --add-dynamic-module=${tempDir}/ngx_brotli-${BROTLI_VERSION}rc \
+        --add-dynamic-module=${tempDir}/zstd-nginx-module-${ZSTD_VERSION} \
+        --add-dynamic-module=${tempDir}/nginx-acme-${ACME_VERSION} \
+        --add-dynamic-module=${tempDir}/naxsi_src \
         --with-cc-opt='-O3 -g -pipe -Wall' \
-    && make -j"$(nproc)" \
-    && make modules \
+    && make -j$(nproc) \
+    && make -j$(nproc) modules \
     && make install \
     && curl -sL https://raw.githubusercontent.com/ai-robots-txt/ai.robots.txt/refs/heads/main/robots.txt | \
         grep -v Disallow | \
