@@ -98,10 +98,10 @@ RUN apk add --no-cache --virtual .runtime-deps \
         --with-stream_realip_module \
         --with-stream_ssl_module \
         --with-stream_ssl_preread_module \
-        --add-dynamic-module=${tempDir}/ngx_brotli-${BROTLI_VERSION}rc \
-        --add-dynamic-module=${tempDir}/zstd-nginx-module-${ZSTD_VERSION} \
-        --add-dynamic-module=${tempDir}/nginx-acme-${ACME_VERSION} \
-        --add-dynamic-module=${tempDir}/naxsi_src \
+        --add-module=${tempDir}/ngx_brotli-${BROTLI_VERSION}rc \
+        --add-module=${tempDir}/zstd-nginx-module-${ZSTD_VERSION} \
+        --add-module=${tempDir}/nginx-acme-${ACME_VERSION} \
+        --add-module=${tempDir}/naxsi_src \
         --with-cc-opt='-O3 -g -pipe -Wall' \
     && make -j$(nproc) \
     && make -j$(nproc) modules \
