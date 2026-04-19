@@ -52,8 +52,7 @@ thresholds:
     action: CHALLENGE
     challenge:
       algorithm: metarefresh
-      difficulty: 1
-      report_as: 1
+      difficulty: 2
   - name: moderate-suspicion
     expression:
       all:
@@ -62,8 +61,7 @@ thresholds:
     action: CHALLENGE
     challenge:
       algorithm: fast
-      difficulty: 2
-      report_as: 2
+      difficulty: 5
   - name: mild-proof-of-work
     expression:
       all:
@@ -72,12 +70,10 @@ thresholds:
     action: CHALLENGE
     challenge:
       algorithm: fast
-      difficulty: 2
-      report_as: 2
+      difficulty: 5
   - name: extreme-suspicion
     expression: weight >= 30
     action: CHALLENGE
     challenge:
       algorithm: fast
-      difficulty: 4
-      report_as: 4
+      difficulty: 8
