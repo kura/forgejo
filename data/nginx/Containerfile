@@ -9,6 +9,7 @@ ENV ACME_VERSION 0.3.1
 ENV NAXSI_VERSION 1.7
 ENV NDK_VERSION 0.3.4
 ENV NGX_LUA_VERSION 0.10.29
+ENV NGX_VTS_VERSION 0.2.5
 ENV LUA_RESTY_CORE_VERSION 0.1.32
 ENV LUA_RESTY_LRU_VERSION 0.15
 
@@ -47,29 +48,32 @@ RUN apk add --no-cache --virtual .runtime-deps \
         -o ngx-naxsi-${NAXSI_VERSION}.tar.gz https://github.com/wargio/naxsi/releases/download/${NAXSI_VERSION}/naxsi-${NAXSI_VERSION}-src-with-deps.tar.gz \
         -o ngx-dev-kit-${NDK_VERSION}.tar.gz https://github.com/vision5/ngx_devel_kit/archive/refs/tags/v${NDK_VERSION}.tar.gz \
         -o ngx-lua-${NGX_LUA_VERSION}.tar.gz https://github.com/openresty/lua-nginx-module/archive/refs/tags/v${NGX_LUA_VERSION}.tar.gz \
+        -o ngx-vts-${NGX_VTS_VERSION}.tar.gz https://github.com/vozlt/nginx-module-vts/archive/refs/tags/v${NGX_VTS_VERSION}.tar.gz \
         -o lua-resty-core-${LUA_RESTY_CORE_VERSION}.tar.gz https://github.com/openresty/lua-resty-core/archive/refs/tags/v${LUA_RESTY_CORE_VERSION}.tar.gz \
         -o lua-resty-lru-${LUA_RESTY_LRU_VERSION}.tar.gz https://github.com/openresty/lua-resty-lrucache/archive/refs/tags/v${LUA_RESTY_LRU_VERSION}.tar.gz \
         -o ngx_dynamic_tls_records_1.29.patch https://raw.githubusercontent.com/nginx-modules/ngx_http_tls_dyn_size/refs/heads/master/nginx__dynamic_tls_records_1.29.2%2B.patch \
     && mkdir openssl-${OPENSSL_VERSION} \
         nginx-${NGINX_VERSION} \
+        luajit-${LUAJIT_VERSION} \
         ngx-brotli-${BROTLI_VERSION} \
         ngx-zstd-${ZSTD_VERSION} \
         ngx-acme-${ACME_VERSION} \
         ngx-naxsi-${NAXSI_VERSION} \
-        luajit-${LUAJIT_VERSION} \
         ngx-dev-kit-${NDK_VERSION} \
         ngx-lua-${NGX_LUA_VERSION} \
+        ngx-vts-${NGX_VTS_VERSION} \
         lua-resty-core-${LUA_RESTY_CORE_VERSION} \
         lua-resty-lru-${LUA_RESTY_LRU_VERSION} \
     && tar xvzf openssl-${OPENSSL_VERSION}.tar.gz -C "openssl-${OPENSSL_VERSION}" --strip-components 1 \
     && tar xvzf nginx-${NGINX_VERSION}.tar.gz -C "nginx-${NGINX_VERSION}" --strip-components 1 \
-    && tar xvzf ngx-brotli-${BROTLI_VERSION}.tar.gz -C "ngx-brotli-${BROTLI_VERSION}" --strip-components 1 \
     && tar xvzf luajit-${LUAJIT_VERSION}.tar.gz -C "luajit-${LUAJIT_VERSION}" --strip-components 1 \
+    && tar xvzf ngx-brotli-${BROTLI_VERSION}.tar.gz -C "ngx-brotli-${BROTLI_VERSION}" --strip-components 1 \
     && tar xvzf ngx-zstd-${ZSTD_VERSION}.tar.gz -C "ngx-zstd-${ZSTD_VERSION}" --strip-components 1 \
     && tar xvzf ngx-acme-${ACME_VERSION}.tar.gz -C "ngx-acme-${ACME_VERSION}" --strip-components 1 \
     && tar xvzf ngx-naxsi-${NAXSI_VERSION}.tar.gz -C "ngx-naxsi-${NAXSI_VERSION}" \
     && tar xvzf ngx-dev-kit-${NDK_VERSION}.tar.gz -C "ngx-dev-kit-${NDK_VERSION}" --strip-components 1 \
     && tar xvzf ngx-lua-${NGX_LUA_VERSION}.tar.gz -C "ngx-lua-${NGX_LUA_VERSION}" --strip-components 1 \
+    && tar xvzf ngx-vts-${NGX_VTS_VERSION}.tar.gz -C "ngx-vts-${NGX_VTS_VERSION}" --strip-components 1 \
     && tar xvzf lua-resty-core-${LUA_RESTY_CORE_VERSION}.tar.gz -C "lua-resty-core-${LUA_RESTY_CORE_VERSION}" --strip-components 1 \
     && tar xvzf lua-resty-lru-${LUA_RESTY_LRU_VERSION}.tar.gz -C "lua-resty-lru-${LUA_RESTY_LRU_VERSION}" --strip-components 1 \
     && cd ${tempDir}/openssl-${OPENSSL_VERSION} \
@@ -77,7 +81,6 @@ RUN apk add --no-cache --virtual .runtime-deps \
         --prefix=/usr \
         --libdir=lib \
         --openssldir=/etc/ssl \
-        enable-fips \
         enable-ktls \
         shared \
         no-zlib \
@@ -87,7 +90,6 @@ RUN apk add --no-cache --virtual .runtime-deps \
         no-mdc2 \
         no-rc5 \
         no-ec2m \
-        no-ssl3 \
         no-seed \
         no-weak-ssl-ciphers \
         no-docs \
@@ -141,6 +143,7 @@ RUN apk add --no-cache --virtual .runtime-deps \
         --add-module=${tempDir}/ngx-naxsi-${NAXSI_VERSION}/naxsi_src \
         --add-module=${tempDir}/ngx-dev-kit-${NDK_VERSION} \
         --add-module=${tempDir}/ngx-lua-${NGX_LUA_VERSION} \
+        --add-module=${tempDir}/ngx-vts-${NGX_VTS_VERSION} \
         --with-ld-opt='-Wl,-rpath,/usr/lib/luajit' \
         --with-cc-opt='-O3 -g -pipe -Wall' \
     && make -j$(nproc) \

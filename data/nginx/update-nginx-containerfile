@@ -44,6 +44,12 @@ lua=$(curl -s https://api.github.com/repos/openresty/lua-nginx-module/tags | \
       head -1)
 if [ $? -eq 0 ]; then exit 0; fi
 
+vts=$(curl -s https://api.github.com/repos/vozlt/nginx-module-vts/releases | \
+      jq -r '.[0].tag_name' | \
+      cut -d'v' -f 2 | \
+      tr -d '[:alpha:][=-=]')
+if [ $? -eq 0 ]; then exit 0; fi
+
 resty_core=$(curl -s https://api.github.com/repos/openresty/lua-resty-core/tags | \
              jq -r '.[].name' | \
              grep -vi r | \
@@ -67,6 +73,7 @@ sed -i \
     -re "s/(ENV NAXSI_VERSION)\ .*/\1 $naxsi/g" \
     -re "s/(NDK_VERSION)\ .*/\1 $ndk/g" \
     -re "s/(NGX_LUA_VERSION)\ .*/\1 $lua/g" \
+    -re "s/(NGX_VTX_VERSION)\ .*/\1 $vts/g" \
     -re "s/(LUA_RESTY_CORE_VERSION)\ .*/\1 $resty_core/g" \
     -re "s/(LUA_RESTY_LRU_VERSION)\ .*/\1 $resty_lru/g" \
     /data/nginx/Containerfile
