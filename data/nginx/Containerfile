@@ -13,7 +13,9 @@ ENV NGX_VTS_VERSION=0.2.5
 ENV LUA_RESTY_CORE_VERSION=0.1.32
 ENV LUA_RESTY_LRU_VERSION=0.15
 
-RUN apk add --no-cache --virtual .runtime-deps \
+RUN set -x \
+    && apk add --no-cache --virtual .runtime-deps \
+        openssl \
         curl \
         libgcc \
         musl \
@@ -35,7 +37,7 @@ RUN apk add --no-cache --virtual .runtime-deps \
         clang-libclang \
         brotli-dev \
         zstd-dev \
-    && set -x \
+        openssl-dev \
     && tempDir=$(mktemp -d) \
     && cd ${tempDir} \
     && curl -L \
@@ -52,7 +54,8 @@ RUN apk add --no-cache --virtual .runtime-deps \
         -o lua-resty-core-${LUA_RESTY_CORE_VERSION}.tar.gz https://github.com/openresty/lua-resty-core/archive/refs/tags/v${LUA_RESTY_CORE_VERSION}.tar.gz \
         -o lua-resty-lru-${LUA_RESTY_LRU_VERSION}.tar.gz https://github.com/openresty/lua-resty-lrucache/archive/refs/tags/v${LUA_RESTY_LRU_VERSION}.tar.gz \
         -o ngx_dynamic_tls_records_1.29.patch https://raw.githubusercontent.com/nginx-modules/ngx_http_tls_dyn_size/refs/heads/master/nginx__dynamic_tls_records_1.29.2%2B.patch \
-    && mkdir openssl-${OPENSSL_VERSION} \
+    && mkdir \
+        openssl-${OPENSSL_VERSION} \
         nginx-${NGINX_VERSION} \
         luajit-${LUAJIT_VERSION} \
         ngx-brotli-${BROTLI_VERSION} \
