@@ -1,17 +1,17 @@
 FROM nginx:mainline-alpine-slim
 
-ENV OPENSSL_VERSION 4.0.0
-ENV NGINX_VERSION 1.30.0
-ENV LUAJIT_VERSION 2.1-20250826
-ENV BROTLI_VERSION 1.0.0
-ENV ZSTD_VERSION 0.1.1
-ENV ACME_VERSION 0.3.1
-ENV NAXSI_VERSION 1.7
-ENV NDK_VERSION 0.3.4
-ENV NGX_LUA_VERSION 0.10.29
-ENV NGX_VTS_VERSION 0.2.5
-ENV LUA_RESTY_CORE_VERSION 0.1.32
-ENV LUA_RESTY_LRU_VERSION 0.15
+ENV OPENSSL_VERSION=4.0.0
+ENV NGINX_VERSION=1.30.0
+ENV LUAJIT_VERSION=2.1-20250826
+ENV BROTLI_VERSION=1.0.0
+ENV ZSTD_VERSION=0.1.1
+ENV ACME_VERSION=0.4.0
+ENV NAXSI_VERSION=1.7
+ENV NDK_VERSION=0.3.4
+ENV NGX_LUA_VERSION=0.10.29
+ENV NGX_VTS_VERSION=0.2.5
+ENV LUA_RESTY_CORE_VERSION=0.1.32
+ENV LUA_RESTY_LRU_VERSION=0.15
 
 RUN apk add --no-cache --virtual .runtime-deps \
         curl \
@@ -102,7 +102,7 @@ RUN apk add --no-cache --virtual .runtime-deps \
     && make -j$(nproc) \
     && make install \
     && rm ${tempDir}/ngx-acme-${ACME_VERSION}/Cargo.lock \
-    && sed -i 's|openssl = { version = "0.10.74"|openssl = { git = "https://github.com/rust-openssl/rust-openssl.git"|g;s|openssl-sys = { version = "0.9.110"|openssl-sys = { git = "https://github.com/rust-openssl/rust-openssl.git"|g' ${tempDir}/ngx-acme-${ACME_VERSION}/Cargo.toml \
+    && sed -i 's/openssl = { version = "0.10.74"/openssl = { version = "0.10.78"/g;s/openssl-sys = { version = "0.9.110"/openssl-sys = { version = "0.9.114"/g' ${tempDir}/ngx-acme-${ACME_VERSION}/Cargo.toml \
     && cd ${tempDir}/nginx-${NGINX_VERSION} \
     && patch -p1 < ${tempDir}/ngx_dynamic_tls_records_1.29.patch \
     && export LUAJIT_LIB=/usr/lib \
@@ -123,6 +123,7 @@ RUN apk add --no-cache --virtual .runtime-deps \
         --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
         --user=nginx \
         --group=nginx \
+        --with-debug \
         --with-compat \
         --with-file-aio \
         --with-threads \
