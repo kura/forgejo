@@ -1,0 +1,98 @@
+FROM alpine:latest
+
+ENV OPENSSL_VERSION=4.0.0
+ENV CURL_VERSION=8.19.0
+# ENV NGTCP2_VERSION 1.22.1
+
+RUN apk add --no-cache --virtual .runtime-deps \
+        libgcc \
+        musl \
+        zlib \
+        brotli-libs \
+        zstd-libs \
+        nghttp2 \
+        nghttp3 \
+        libidn2 \
+        libpsl \
+    && apk add --no-cache --virtual .build-deps \
+        perl \
+        alpine-sdk \
+        gcc \
+        make \
+        bash \
+        linux-headers \
+        libc-dev \
+        zlib-dev \
+        clang-libclang \
+        brotli-dev \
+        zstd-dev \
+        c-ares-dev \
+        libidn2-dev \
+        libpsl-dev \
+        nghttp2-dev \
+        # nghttp3-dev \
+    && set -x \
+    && tempDir=$(mktemp -d) \
+    && cd ${tempDir} \
+    && wget -O openssl-${OPENSSL_VERSION}.tar.gz https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_VERSION}/openssl-${OPENSSL_VERSION}.tar.gz \
+    && wget -O curl-${CURL_VERSION}.tar.gz https://github.com/curl/curl/releases/download/curl-$(echo "${CURL_VERSION}" | sed 's/\./_/g')/curl-${CURL_VERSION}.tar.gz \
+        # -o ngtcp2-${NGTCP2_VERSION}.tar.gz https://github.com/ngtcp2/ngtcp2/releases/download/v${NGTCP2_VERSION}/ngtcp2-${NGTPC2_VERSION}.tar.gz \
+    && mkdir openssl-${OPENSSL_VERSION} \
+        curl-${CURL_VERSION} \
+    && tar xvzf openssl-${OPENSSL_VERSION}.tar.gz -C "openssl-${OPENSSL_VERSION}" --strip-components 1 \
+    && tar xvzf curl-${CURL_VERSION}.tar.gz -C "curl-${CURL_VERSION}" --strip-components 1 \
+    # && tar xvzf ngtcp2-${NGTPC2_VERSION}.tr.gz -C "ngtcp2-${NGTCP2_VERSION}" --strip-components 1 \
+    && cd ${tempDir}/openssl-${OPENSSL_VERSION} \
+    && perl ./Configure \
+        --prefix=/usr \
+        --libdir=lib \
+        --openssldir=/etc/ssl \
+        enable-ktls \
+        shared \
+        no-zlib \
+        no-async \
+        no-comp \
+        no-idea \
+        no-mdc2 \
+        no-rc5 \
+        no-ec2m \
+        no-seed \
+        no-weak-ssl-ciphers \
+        no-docs \
+        no-tests \
+        -O3 -g -pipe -Wa,--noexecstack \
+    && make -j$(nproc) \
+    && make install \
+    && cd ${tempDir}/curl-${CURL_VERSION} \
+    && ./configure \
+        --prefix=/usr \
+        --enable-ares \
+        --enable-ipv6 \
+        --enable-unix-sockets \
+        --enable-alt-svc \
+        --enable-static \
+        --disable-shared \
+        --disable-docs \
+        --enable-ech \
+        --enable-doh \
+        --with-libidn2 \
+        --with-nghttp2 \
+        --with-zllib \
+        --with-brotli \
+        --with-zstd \
+        # --with-nghttp3 \
+        # --with-ngtcp2 \
+        --with-openssl \
+        --with-ca-bundle=/etc/ssl/certs/ca-certificates.crt \
+        --with-ca-path=/etc/ssl/certs \
+        --disable-ldap \
+        --with-pic \
+        --with-ech \
+        --enable-websockets \
+        --without-libssh2 \
+    && make -j$(nproc) \
+    && make install \
+    && apk del --no-network .build-deps \
+    && rm -rf ${tempDir}
+
+CMD ["curl"]
