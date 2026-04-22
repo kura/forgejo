@@ -5,20 +5,16 @@ ENV CURL_VERSION=8.19.0
 # ENV NGTCP2_VERSION 1.22.1
 
 RUN apk add --no-cache --virtual .runtime-deps \
-        libgcc \
+        ca-certificates-bundle \
         musl \
         zlib \
         brotli-libs \
         zstd-libs \
-        nghttp2 \
-        nghttp3 \
-        libidn2 \
-        libpsl \
     && apk add --no-cache --virtual .build-deps \
+        make \
         perl \
         alpine-sdk \
         gcc \
-        make \
         bash \
         linux-headers \
         libc-dev \
@@ -30,7 +26,8 @@ RUN apk add --no-cache --virtual .runtime-deps \
         libidn2-dev \
         libpsl-dev \
         nghttp2-dev \
-        # nghttp3-dev \
+        nghttp3-dev \
+        ngtcp2-dev \
     && set -x \
     && tempDir=$(mktemp -d) \
     && cd ${tempDir} \
@@ -49,7 +46,9 @@ RUN apk add --no-cache --virtual .runtime-deps \
         --openssldir=/etc/ssl \
         enable-ktls \
         shared \
-        no-zlib \
+        enable-zlib-dynamic \
+        enable-brotli-dynamic \
+        enable-zstd-dynamic \
         no-async \
         no-comp \
         no-idea \
@@ -60,9 +59,12 @@ RUN apk add --no-cache --virtual .runtime-deps \
         no-weak-ssl-ciphers \
         no-docs \
         no-tests \
+        no-ssl3 \
+        no-tls1 \
+        no-tls1_1 \
         -O3 -g -pipe -Wa,--noexecstack \
     && make -j$(nproc) \
-    && make install \
+    && make install_sw \
     && cd ${tempDir}/curl-${CURL_VERSION} \
     && ./configure \
         --prefix=/usr \
@@ -92,7 +94,7 @@ RUN apk add --no-cache --virtual .runtime-deps \
         --without-libssh2 \
     && make -j$(nproc) \
     && make install \
-    && apk del --no-network .build-deps \
+    # && apk del --no-network .build-deps \
     && rm -rf ${tempDir}
 
 CMD ["curl"]
