@@ -14,8 +14,8 @@ ENV LUA_RESTY_CORE_VERSION=0.1.32
 ENV LUA_RESTY_LRU_VERSION=0.15
 
 RUN set -x \
+    && apk del nginx* \
     && apk add --no-cache --virtual .runtime-deps \
-        openssl \
         curl \
         libgcc \
         musl \
@@ -24,11 +24,11 @@ RUN set -x \
         brotli-libs \
         zstd-libs \
     && apk add --no-cache --virtual .build-deps \
+        make \
         perl \
         alpine-sdk \
         gcc \
         libc-dev \
-        make \
         pcre2-dev \
         zlib-dev \
         linux-headers \
@@ -37,7 +37,6 @@ RUN set -x \
         clang-libclang \
         brotli-dev \
         zstd-dev \
-        openssl-dev \
     && tempDir=$(mktemp -d) \
     && cd ${tempDir} \
     && curl -L \
@@ -80,13 +79,15 @@ RUN set -x \
     && tar xvzf lua-resty-core-${LUA_RESTY_CORE_VERSION}.tar.gz -C "lua-resty-core-${LUA_RESTY_CORE_VERSION}" --strip-components 1 \
     && tar xvzf lua-resty-lru-${LUA_RESTY_LRU_VERSION}.tar.gz -C "lua-resty-lru-${LUA_RESTY_LRU_VERSION}" --strip-components 1 \
     && cd ${tempDir}/openssl-${OPENSSL_VERSION} \
-    && perl ./Configure \
+    && ./Configure \
         --prefix=/usr \
         --libdir=lib \
         --openssldir=/etc/ssl \
         enable-ktls \
         shared \
-        no-zlib \
+        enable-zlib-dynamic \
+        enable-brotli-dynamic \
+        enable-zstd-dynamic \
         no-async \
         no-comp \
         no-idea \
@@ -97,9 +98,12 @@ RUN set -x \
         no-weak-ssl-ciphers \
         no-docs \
         no-tests \
+        no-ssl3 \
+        no-tls1 \
+        no-tls1_1 \
         -O3 -g -pipe -Wa,--noexecstack \
     && make -j$(nproc) \
-    && make install \
+    && make install_sw \
     && cd ${tempDir}/luajit-${LUAJIT_VERSION} \
     && sed -i 's/export PREFIX= \/usr\/local/export PREFIX=\/usr/g' Makefile \
     && make -j$(nproc) \
@@ -170,6 +174,5 @@ RUN set -x \
         /etc/nginx/scgi* \
         /etc/nginx/uwsgi* \
         /etc/nginx/win-utf \
-    && cd /  \
     && apk del --no-network .build-deps \
     && rm -rf ${tempDir}
