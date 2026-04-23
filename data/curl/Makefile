@@ -6,7 +6,7 @@ build:
 	docker buildx build --progress=plain -t $(REPO):$(TAG) --platform linux/amd64,linux/aarch64 --push -f Containerfile .
 
 prune:
-	docker buildx prune
+	docker buildx prune -f
 
 update:
 	./update-versions $(CONTAINERFILE)
