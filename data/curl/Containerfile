@@ -122,7 +122,15 @@ RUN set -x \
         --without-libssh2 \
     && make -j$(nproc) \
     && make install \
-    && apk del --no-network .build-deps \
+    && apk del --no-network .build-deps \    
     && rm -rf ${tempDir}
 
-CMD ["curl"]
+COPY <<-"EOT" /entrypoint.sh
+    set -e
+    set -- curl "$@"
+    exec "$@"
+EOT
+
+WORKDIR /
+ENTRYPOINT ["sh", "entrypoint.sh"]
+
