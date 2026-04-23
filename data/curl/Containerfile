@@ -1,5 +1,10 @@
 FROM alpine:latest
 
+LABEL org.opencontainers.image.authors="Kura"
+LABEL org.opencontainers.image.title="curl with openssl 4 for ECH support, http2, and http3"
+LABEL org.opencontainers.image.source="https://git.kura.gg/kura/forgejo"
+LABEL org.opencontainers.image.url="https://git.kura.gg/kura/forgejo/src/branch/main/data/curl"
+
 ENV OPENSSL_VERSION=4.0.0
 ENV CURL_VERSION=8.19.0
 ENV NGTCP2_VERSION=1.22.1
@@ -102,7 +107,7 @@ RUN set -x \
         --enable-ech \
         --enable-doh \
         --with-libidn2 \
-        --with-zllib \
+        --with-zlib \
         --with-brotli \
         --with-zstd \
         --with-nghttp2 \
@@ -113,7 +118,6 @@ RUN set -x \
         --with-ca-path=/etc/ssl/certs \
         --disable-ldap \
         --with-pic \
-        --with-ech \
         --enable-websockets \
         --without-libssh2 \
     && make -j$(nproc) \
