@@ -41,5 +41,5 @@ jobs:
         with:
           file: data/forgejo/Containerfile
           context: .
-          tag: git.kura.gg/kura/forgejo/forgejo:latest
+          tags: git.kura.gg/kura/forgejo/forgejo:latest
           push: true
