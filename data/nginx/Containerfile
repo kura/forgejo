@@ -1,5 +1,9 @@
 FROM nginx:mainline-alpine-slim
 
+LABEL org.opencontainers.image.authors="Kura"
+LABEL org.opencontainers.image.source="https://git.kura.gg/kura/forgejo"
+LABEL org.opencontainers.image.url="https://git.kura.gg/kura/forgejo/src/branch/main/data/nginx"
+
 ENV OPENSSL_VERSION=4.0.0
 ENV NGINX_VERSION=1.30.0
 ENV LUAJIT_VERSION=2.1-20250826

@@ -1,5 +1,9 @@
 FROM codeberg.org/forgejo/forgejo:a.b.c
 
+LABEL org.opencontainers.image.authors="Kura"
+LABEL org.opencontainers.image.source="https://git.kura.gg/kura/forgejo"
+LABEL org.opencontainers.image.url="https://git.kura.gg/kura/forgejo/src/branch/main/data/forgejo"
+
 RUN apk --no-cache add \
         asciidoctor \
         freetype \
