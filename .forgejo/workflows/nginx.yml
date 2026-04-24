@@ -25,8 +25,11 @@ jobs:
           cd data/nginx
           make update ./Containerfile
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
       - name: Setup Buildx
-        uses: https://github.com/docker/setup-buildx-action@v3
+        uses: https://github.com/docker/setup-buildx-action@v4
         platforms: linux/amd64,linux/arm64
 
       - name: Log in to Container Registry
