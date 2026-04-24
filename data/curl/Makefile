@@ -9,4 +9,4 @@ prune:
 	docker buildx prune -f
 
 update:
-	./update-versions $(CONTAINERFILE)
+	$(PWD)/update-versions $(CONTAINERFILE)

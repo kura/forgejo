@@ -1,0 +1,44 @@
+name: Build and Publish Docker Image
+
+on:
+  push:
+    branches:
+      - "main"
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  build_and_publish:
+    runs-on: docker
+    container:
+      image: data.forgejo.org/oci/node:24-alpine
+    steps:
+      - name: Checkout
+        uses: https://data.forgejo.org/actions/checkout@v6
+
+      - name: Install docker-cli
+        run: apk add docker-cli
+
+      - name: Update versions
+        run: |
+          apk add curl jq
+          cd data/nginx
+          ./update-versions
+
+      - name: Setup Buildx
+        uses: https://github.com/docker/setup-buildx-action@v3
+        platforms: linux/arm64
+
+      - name: Log in to Container Registry
+        uses: https://github.com/docker/login-action@v4
+        with:
+          registry: git.kura.gg
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: https://github.com/docker/build-push-action@v7
+        with:
+          file: data/nginx/Containerfile
+          context: .
+          tag: git.kura.gg/kura/forgejo/nginx:latest
