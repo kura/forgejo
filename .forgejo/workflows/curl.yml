@@ -16,6 +16,9 @@ jobs:
       - name: Checkout
         uses: https://data.forgejo.org/actions/checkout@v6
 
+      - name: Install dependencies
+        run: apk add docker-cli curl jq bash make
+
       - name: Set up Docker
         uses: https://github.com/docker/setup-docker-action@v5
         with:
@@ -27,12 +30,8 @@ jobs:
               }
             }
 
-      - name: Install docker-cli
-        run: apk add docker-cli
-
       - name: Update versions
         run: |
-          apk add curl jq bash make
           cd data/curl
           make update
 
