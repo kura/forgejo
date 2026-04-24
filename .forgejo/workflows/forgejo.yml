@@ -16,6 +16,17 @@ jobs:
       - name: Checkout
         uses: https://data.forgejo.org/actions/checkout@v6
 
+      - name: Set up Docker
+        uses: https://github.com/docker/setup-docker-action@v5
+        with:
+          daemon-config: |
+            {
+              "debug": true,
+              "features": {
+                "containerd-snapshotter": true
+              }
+            }
+
       - name: Install docker-cli
         run: apk add docker-cli
 
@@ -26,7 +37,7 @@ jobs:
           make update ./Containerfile
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v4
+        uses: https://github.com/docker/setup-qemu-action@v4
 
       - name: Setup Buildx
         uses: https://github.com/docker/setup-buildx-action@v4
