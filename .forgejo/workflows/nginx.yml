@@ -21,9 +21,9 @@ jobs:
 
       - name: Update versions
         run: |
-          apk add curl jq
+          apk add curl jq bash make
           cd data/nginx
-          bash ./update-versions
+          make update ./Containerfile
 
       - name: Setup Buildx
         uses: https://github.com/docker/setup-buildx-action@v3

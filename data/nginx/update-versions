@@ -1,5 +1,8 @@
 #!/usr/bin/bash
 if ! command -v jq > /dev/null || ! command -v curl > /dev/null; then echo "Please install curl and jq" && exit 1; fi
+if [ "$#" -ne 1 ]; then echo "Containerfile param required" && exit 1; fi
+CONTAINERFILE=$1
+
 openssl=$(curl -s https://api.github.com/repos/openssl/openssl/releases 2>&1 /dev/null | \
           jq -r '.[0].tag_name' | \
           cut -d'v' -f 2 | \
@@ -76,4 +79,4 @@ sed -i \
     -re "s/(NGX_VTX_VERSION)\ .*/\1 $vts/g" \
     -re "s/(LUA_RESTY_CORE_VERSION)\ .*/\1 $resty_core/g" \
     -re "s/(LUA_RESTY_LRU_VERSION)\ .*/\1 $resty_lru/g" \
-    /data/nginx/Containerfile
+    "$CONTAINERFILE"

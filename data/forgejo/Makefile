@@ -1,4 +1,4 @@
-REPO:=git.kura.gg/kura/forgejo/curl
+REPO:=git.kura.gg/kura/forgejo/forgejo
 TAG:=latest
 CONTAINERFILE?=Containerfile
 
