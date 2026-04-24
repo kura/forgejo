@@ -27,7 +27,7 @@ jobs:
 
       - name: Setup Buildx
         uses: https://github.com/docker/setup-buildx-action@v3
-        platforms: linux/arm64
+        platforms: linux/amd64,linux/arm64
 
       - name: Log in to Container Registry
         uses: https://github.com/docker/login-action@v4
