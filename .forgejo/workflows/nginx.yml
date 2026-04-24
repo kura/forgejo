@@ -19,17 +19,6 @@ jobs:
       - name: Install dependencies
         run: apk add docker-cli curl jq bash make
 
-      - name: Set up Docker
-        uses: https://github.com/docker/setup-docker-action@v5
-        with:
-          daemon-config: |
-            {
-              "debug": true,
-              "features": {
-                "containerd-snapshotter": true
-              }
-            }
-
       - name: Update versions
         run: |
           cd data/nginx
