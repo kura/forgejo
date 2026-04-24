@@ -1,24 +1,26 @@
-FROM codeberg.org/forgejo/forgejo:a.b.c
+FROM codeberg.org/forgejo/forgejo:15.0.0
 
 LABEL org.opencontainers.image.authors="Kura"
 LABEL org.opencontainers.image.source="https://git.kura.gg/kura/forgejo"
 LABEL org.opencontainers.image.url="https://git.kura.gg/kura/forgejo/src/branch/main/data/forgejo"
 
-RUN apk --no-cache add \
-        asciidoctor \
-        freetype \
+RUN set -x \
+    && apk add --no-cache --virtual .build-deps \
         freetype-dev \
         gcc \
         g++ \
-        libpng \
         libffi-dev \
-        pandoc \
         python3-dev \
-        py3-pyzmq \
         py3-pip \
         py3-wheel \
+    && apk add --no-cache --virtual .runtime-deps \
+        asciidoctor \
+        freetype \
+        libpng \
+        pandoc \
+        py3-pyzmq \
     && python3 -m pip install --no-input --break-system-packages --root-user-action=ignore \
         jupyter \
         docutils \
-    && rm -rf /var/cache/apk/* \
+    && apk del --no-network .build-deps \
     && rm -rf /root/.cache
