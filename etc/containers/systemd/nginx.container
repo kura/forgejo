@@ -4,7 +4,7 @@ Description=nginx container
 [Container]
 Pod=forgejo.pod
 ContainerName=nginx
-Image=nginx.build
+Image=git.kura.gg/kura/forgejo/nginx:latest
 AutoUpdate=local
 
 Volume=/data/nginx/nginx.conf:/etc/nginx/nginx.conf

@@ -4,7 +4,7 @@ Description=Forgejo container
 [Container]
 Pod=forgejo.pod
 ContainerName=forgejo
-Image=forgejo.build
+Image=git.kura.gg/kura/forgejo/forgejo:latest
 AutoUpdate=local
 
 Volume=/data/forgejo:/data

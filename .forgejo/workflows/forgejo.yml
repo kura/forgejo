@@ -23,7 +23,7 @@ jobs:
         run: |
           apk add curl jq
           cd data/forgejo
-          ./update-versions
+          bash ./update-versions
 
       - name: Setup Buildx
         uses: https://github.com/docker/setup-buildx-action@v3
