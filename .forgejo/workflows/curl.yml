@@ -42,3 +42,4 @@ jobs:
           file: data/curl/Containerfile
           context: .
           tag: git.kura.gg/kura/forgejo/curl:latest
+          push: true
