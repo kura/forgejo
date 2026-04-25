@@ -179,4 +179,4 @@ RUN set -x \
         /etc/nginx/uwsgi* \
         /etc/nginx/win-utf \
     && apk del --no-network .build-deps \
-    && rm -rf ${tempDir}
+    && rm -rf ${tempDir} ${HOME}/.cargo
