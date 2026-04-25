@@ -9,7 +9,7 @@ on:
 
 jobs:
   build_and_publish:
-    runs-on: docker
+    runs-on: arm64
     container:
       image: data.forgejo.org/oci/node:24-alpine
     steps:
