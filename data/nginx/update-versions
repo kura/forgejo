@@ -69,6 +69,16 @@ resty_lru=$(curl -s https://api.github.com/repos/openresty/lua-resty-lrucache/ta
             head -1)
 if [ $? -eq 0 ]; then exit 0; fi
 
+echo "openssl=$openssl"
+echo "nginx=$nginx"
+echo "nginx-acme=$acme"
+echo "naxsi=$naxsi"
+echo "nginx-devel-kit=$ndk"
+echo "luajit=$lua"
+echo "nginx-vts=$vts"
+echo "resty_core=$resty_core"
+echo "resty_lru=$resty_lru"
+
 sed -i \
     -re "s/(ENV OPENSSL_VERSION)\ .*/\1 $openssl/g" \
     -re "s/(ENV NGINX_VERSION)\ .*/\1 $nginx/g" \
