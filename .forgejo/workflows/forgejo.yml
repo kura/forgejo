@@ -20,9 +20,8 @@ jobs:
         run: apk add docker-cli curl jq bash make
 
       - name: Update versions
-        run: |
-          cd data/forgejo
-          make update ./Containerfile
+        working_directory: data/forgejo
+        run: make update ./Containerfile
 
       - name: Set up QEMU
         uses: https://github.com/docker/setup-qemu-action@v4

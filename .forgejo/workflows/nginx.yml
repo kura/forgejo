@@ -20,8 +20,8 @@ jobs:
         run: apk add docker-cli curl jq bash make
 
       - name: Update versions
-        run: |
-          cd data/nginx
+        working_directory: data/nginx
+        run:
           make update ./Containerfile
 
       - name: Set up QEMU
