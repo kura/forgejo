@@ -20,8 +20,9 @@ jobs:
         run: apk add docker-cli curl jq bash make
 
       - name: Update versions
-        working_directory: data/curl
-        run:  make update
+        run: |
+             cd data/curl
+             make update
 
       - name: Set up QEMU
         uses: https://github.com/docker/setup-qemu-action@v4
