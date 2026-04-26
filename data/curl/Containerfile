@@ -10,7 +10,7 @@ LABEL org.opencontainers.image.authors="Kura"
 LABEL org.opencontainers.image.title="curl with openssl 4 for ECH support, http2, and http3"
 LABEL org.opencontainers.image.source="https://git.kura.gg/kura/forgejo"
 LABEL org.opencontainers.image.url="https://git.kura.gg/kura/forgejo/src/branch/main/data/curl"
-LABEL org.opencontainers.image.version="openssl=${OPENSSL_VERSION},curl=${CURL_VERSION},ngtcp=${NGTCP2_VERSION},nghttp2=${NGHTTP2_VERSION},nghttp3=${NGHTTP3_VERSION}"
+LABEL org.opencontainers.image.version="${CURL_VERSION}"
 
 RUN set -x \
     && apk add --no-cache --virtual .runtime-deps \

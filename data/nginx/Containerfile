@@ -1,9 +1,5 @@
 FROM nginx:mainline-alpine-slim
 
-LABEL org.opencontainers.image.authors="Kura"
-LABEL org.opencontainers.image.source="https://git.kura.gg/kura/forgejo"
-LABEL org.opencontainers.image.url="https://git.kura.gg/kura/forgejo/src/branch/main/data/nginx"
-
 ENV OPENSSL_VERSION=4.0.0
 ENV NGINX_VERSION=1.30.0
 ENV LUAJIT_VERSION=2.1-20250826
@@ -16,6 +12,11 @@ ENV NGX_LUA_VERSION=0.10.29
 ENV NGX_VTS_VERSION=0.2.5
 ENV LUA_RESTY_CORE_VERSION=0.1.32
 ENV LUA_RESTY_LRU_VERSION=0.15
+
+LABEL org.opencontainers.image.authors="Kura"
+LABEL org.opencontainers.image.source="https://git.kura.gg/kura/forgejo"
+LABEL org.opencontainers.image.url="https://git.kura.gg/kura/forgejo/src/branch/main/data/nginx"
+LABEL org.opencontainers.image.version="${NGINX_VERSION}"
 
 RUN set -x \
     && apk del nginx* \
