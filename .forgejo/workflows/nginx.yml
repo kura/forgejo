@@ -24,6 +24,9 @@ jobs:
              cd data/nginx
              make update ./Containerfile
 
+      - name: Set version envvar
+        run: echo "VERSION_ENV=$(grep 'ENV FORGEJO_VERSION' data/forgejo/Containerfile | awk -F'=' '{print$2}')" >> $FORGEJO_ENV
+
       - name: Set up QEMU
         uses: https://github.com/docker/setup-qemu-action@v4
 
@@ -43,5 +46,5 @@ jobs:
           platforms: linux/amd64,linux/arm64
           file: data/nginx/Containerfile
           context: .
-          tags: git.kura.gg/kura/forgejo/nginx:latest
+          tags: git.kura.gg/kura/forgejo/nginx:latest,git.kura.gg/kura/forgejo/nginx:${{ env.VERSION_ENV }}
           push: true
