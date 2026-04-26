@@ -33,12 +33,19 @@ jobs:
       - name: Setup Buildx
         uses: https://github.com/docker/setup-buildx-action@v4
 
-      - name: Log in to Container Registry
+      - name: Log in to Forgejo Container Registry
         uses: https://github.com/docker/login-action@v4
         with:
           registry: git.kura.gg
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Log in to GitHub Container Registry
+        uses: https://github.com/docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GH_USERNAME }}
+          password: ${{ secrets.GH_PASSWORD }}
 
       - name: Build and push Docker image
         uses: https://github.com/docker/build-push-action@v7
@@ -46,5 +53,9 @@ jobs:
           platforms: linux/amd64,linux/arm64
           file: data/curl/Containerfile
           context: .
-          tags: git.kura.gg/kura/forgejo/curl:latest,git.kura.gg/kura/forgejo/curl:${{ env.VERSION_ENV }}
+          tags: |
+            git.kura.gg/kura/forgejo/curl:latest
+            git.kura.gg/kura/forgejo/curl:${{ env.VERSION_ENV }}
+            ghcr.io/kura/forgejo/curl:latest
+            ghcr.io/kura/forgejo/curl:${{ env.VERSION_ENV }}
           push: true
