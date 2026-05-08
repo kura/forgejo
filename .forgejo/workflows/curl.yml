@@ -25,7 +25,7 @@ jobs:
              make update
 
       - name: Set version envvar
-        run: echo "VERSION_ENV=$(grep 'ENV FORGEJO_VERSION' data/forgejo/Containerfile | awk -F'=' '{print$2}')" >> $FORGEJO_ENV
+        run: echo "VERSION_ENV=$(grep 'ENV CURL_VERSION' data/curl/Containerfile | awk -F'=' '{print$2}')" >> $FORGEJO_ENV
 
       - name: Set up QEMU
         uses: https://github.com/docker/setup-qemu-action@v4
