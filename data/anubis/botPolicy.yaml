@@ -12,12 +12,15 @@ bots:
 
   - import: (data)/apps/allow-api-routes.yaml
   - import: (data)/common/allow-api-like.yaml
+  - import: (data)/apps/gitea-rss-feeds.yaml
+  - import: (data)/apps/qualys-ssl-labs.yml
   - import: (data)/common/json-api.yaml
-    import: (data)/bots/_deny-pathological.yaml
+  - import: (data)/bots/_deny-pathological.yaml
   - import: (data)/bots/aggressive-brazilian-scrapers.yaml
   - import: (data)/meta/ai-block-aggressive.yaml
   - import: (data)/clients/x-firefox-ai.yaml
   - import: (data)/common/keep-internet-working.yaml
+  - import: (data)/clients/docker-client.yaml
   - name: generic-browser
     user_agent_regex: >-
       Mozilla|Opera
@@ -33,8 +36,8 @@ openGraph:
   ttl: 24h
 
 status_codes:
-  CHALLENGE: 403
-  DENY: 403
+  CHALLENGE: 200
+  DENY: 200
 
 store:
   backend: memory
@@ -52,7 +55,7 @@ thresholds:
     action: CHALLENGE
     challenge:
       algorithm: metarefresh
-      difficulty: 2
+      difficulty: 4
   - name: moderate-suspicion
     expression:
       all:
