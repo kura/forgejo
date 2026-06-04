@@ -1,6 +1,6 @@
-FROM codeberg.org/forgejo/forgejo:15.0.0
+FROM codeberg.org/forgejo/forgejo:15.0.2
 
-ENV FORGEJO_VERSION=15.0.0
+ENV FORGEJO_VERSION=15.0.2
 
 LABEL org.opencontainers.image.authors="Kura"
 LABEL org.opencontainers.image.source="https://git.kura.gg/kura/forgejo"

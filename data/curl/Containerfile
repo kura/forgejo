@@ -1,10 +1,10 @@
 FROM alpine:latest
 
 ENV OPENSSL_VERSION=4.0.0
-ENV CURL_VERSION=8.19.0
-ENV NGTCP2_VERSION=1.22.1
+ENV CURL_VERSION=8.20.0
+ENV NGTCP2_VERSION=1.23.0
 ENV NGHTTP2_VERSION=1.69.0
-ENV NGHTTP3_VERSION=1.15.0
+ENV NGHTTP3_VERSION=1.16.0
 
 LABEL org.opencontainers.image.authors="Kura"
 LABEL org.opencontainers.image.title="curl with openssl 4 for ECH support, http2, and http3"
