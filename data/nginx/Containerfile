@@ -44,7 +44,7 @@ RUN set -x \
         zstd-dev \
     && tempDir=$(mktemp -d) \
     && cd ${tempDir} \
-    && curl -fL --fail-early \
+    && curl -fL \
         -o openssl-${OPENSSL_VERSION}.tar.gz https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_VERSION}/openssl-${OPENSSL_VERSION}.tar.gz \
         -o nginx-${NGINX_VERSION}.tar.gz https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
         -o luajit-${LUAJIT_VERSION}.tar.gz https://github.com/openresty/luajit2/archive/refs/tags/v${LUAJIT_VERSION}.tar.gz \
