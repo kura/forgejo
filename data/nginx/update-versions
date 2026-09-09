@@ -1,4 +1,6 @@
 #!/usr/bin/bash
+set -euo pipefail
+
 if ! command -v jq > /dev/null || ! command -v curl > /dev/null; then echo "Please install curl and jq" && exit 1; fi
 if [ "$#" -ne 1 ]; then echo "Containerfile param required" && exit 1; fi
 CONTAINERFILE=$1
@@ -33,13 +35,6 @@ ndk=$(curl -s https://api.github.com/repos/vision5/ngx_devel_kit/releases | \
       cut -d'v' -f 2 | \
       tr -d '[:alpha:][=-=]')
 
-lua=$(curl -s https://api.github.com/repos/openresty/lua-nginx-module/tags | \
-      jq -r '.[].name' | \
-      grep -vi r | \
-      cut -d'v' -f 2 | \
-      tr -d '[:alpha:][=-=]' | \
-      head -1)
-
 vts=$(curl -s https://api.github.com/repos/vozlt/nginx-module-vts/releases | \
       jq -r '.[0].tag_name' | \
       cut -d'v' -f 2 | \
@@ -51,6 +46,14 @@ resty_core=$(curl -s https://api.github.com/repos/openresty/lua-resty-core/tags 
              cut -d'v' -f 2 | \
              tr -d '[:alpha:][=-=]' | \
              head -1)
+
+lua=$(curl -sfL "https://raw.githubusercontent.com/openresty/lua-resty-core/v${resty_core}/lib/resty/core/base.lua" | \
+      grep -m1 -oE 'ngx_http_lua_module [0-9]+\.[0-9]+\.[0-9]+' | \
+      awk '{print $2}')
+
+if [ -z "$lua" ]; then
+    echo "could not determine ngx_lua version required by lua-resty-core ${resty_core}" && exit 1
+fi
 
 resty_lru=$(curl -s https://api.github.com/repos/openresty/lua-resty-lrucache/tags | \
             jq -r '.[].name' | \
