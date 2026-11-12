@@ -4,7 +4,4 @@ Description=Podman prune
 [Service]
 Type=oneshot
 User=root
-ExecStart=podman system prune -af --build
-
-[Install]
-WantedBy=multi-user.target
+ExecStart=podman system prune -f --build

@@ -18,9 +18,10 @@ HealthInterval=60s
 HealthRetries=5
 HealthTimeout=10s
 HealthStartPeriod=10s
+HealthOnFailure=kill
 
 [Service]
-Restart=unless-stopped
+Restart=always
 
 [Install]
 WantedBy=default.target

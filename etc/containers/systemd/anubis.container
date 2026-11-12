@@ -20,14 +20,15 @@ Environment=OG_EXPIRY_TIME=24h
 Environment=REDIRECT_DOMAINS=git.kura.gg
 Environment=USE_SIMPLIFIED_EXPLANATION=true
 
-#HealthCmd="anubis --healthcheck"
-#HealthInterval=60s
-#HealthRetries=5
-#HealthTimeout=30s
-#HealthStartPeriod=1s
+HealthCmd=["anubis", "--healthcheck"]
+HealthInterval=60s
+HealthRetries=5
+HealthTimeout=30s
+HealthStartPeriod=10s
+HealthOnFailure=kill
 
 [Service]
-Restart=unless-stopped
+Restart=always
 
 [Install]
 WantedBy=default.target
