@@ -174,7 +174,7 @@ RUN set -x \
         grep -v Disallow | \
         cut -d' ' -f2 | \
         tr '[:upper:]' '[:lower:]' | \
-        while read u; do echo "~*$u* 1;" >> /etc/nginx/ai-ua.map; done \
+        while read u; do echo "~*$u 1;" >> /etc/nginx/ai-ua.map; done \
     && mv ${tempDir}/ngx-naxsi-${NAXSI_VERSION}/naxsi_rules /etc/nginx/naxsi \
     && rm -rf /etc/nginx/conf.d \
         /etc/nginx/fastcgi* \
