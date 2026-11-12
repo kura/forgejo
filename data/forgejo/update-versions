@@ -1,10 +1,10 @@
 #!/usr/bin/bash
-
+set -euo pipefail
 if ! command -v jq > /dev/null || ! command -v curl > /dev/null; then echo "Please install curl and jq" && exit 1; fi
 if [ "$#" -ne 1 ]; then echo "Containerfile param required" && exit 1; fi
 CONTAINERFILE=$1
 JSON=$(curl -s -H "Accept: application/json" "https://codeberg.org/api/v1/packages/forgejo?type=container")
-version=$(echo "$JSON" | jq -r '.[].version' | grep -vE "(sha256|rootless)" | sort | tail -1)
+version=$(echo "$JSON" | jq -r '.[].version' | grep -vE "(sha256|rootless)" | sort -V | tail -1)
 echo "forgejo=$version"
 sed -i \
     -re "s/(forgejo\/forgejo)\:.*/\1:$version/gi" \

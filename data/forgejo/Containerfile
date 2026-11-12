@@ -7,7 +7,7 @@ LABEL org.opencontainers.image.source="https://git.kura.gg/kura/forgejo"
 LABEL org.opencontainers.image.url="https://git.kura.gg/kura/forgejo/src/branch/main/data/forgejo"
 LABEL org.opencontainers.image.version="${FORGEJO_VERSION}"
 
-RUN set -x \
+RUN set -x -o pipefail \
     && apk add --no-cache --virtual .build-deps \
         freetype-dev \
         gcc \

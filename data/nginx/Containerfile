@@ -18,7 +18,7 @@ LABEL org.opencontainers.image.source="https://git.kura.gg/kura/forgejo"
 LABEL org.opencontainers.image.url="https://git.kura.gg/kura/forgejo/src/branch/main/data/nginx"
 LABEL org.opencontainers.image.version="${NGINX_VERSION}"
 
-RUN set -x \
+RUN set -x -o pipefail \
     && apk del nginx* \
     && apk add --no-cache --virtual .runtime-deps \
         curl \
@@ -189,7 +189,7 @@ RUN set -x \
 
 COPY data/nginx/smoke.conf /tmp/smoke.conf
 
-RUN set -eux \
+RUN set -eux -o pipefail \
     && mkdir -p /var/cache/nginx \
     && nginx -t -c /tmp/smoke.conf \
     && nginx -c /tmp/smoke.conf \

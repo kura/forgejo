@@ -12,7 +12,7 @@ LABEL org.opencontainers.image.source="https://git.kura.gg/kura/forgejo"
 LABEL org.opencontainers.image.url="https://git.kura.gg/kura/forgejo/src/branch/main/data/curl"
 LABEL org.opencontainers.image.version="${CURL_VERSION}"
 
-RUN set -x \
+RUN set -x -o pipefail \
     && apk add --no-cache --virtual .runtime-deps \
         ca-certificates-bundle \
         musl \

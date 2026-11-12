@@ -1,5 +1,7 @@
 [Unit]
 Description=nginx container
+Requires=anubis.service forgejo.service
+After=anubis.service forgejo.service
 
 [Container]
 Pod=forgejo.pod
