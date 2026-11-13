@@ -11,12 +11,12 @@ gh_api() {
          "https://api.github.com/repos/$1"
 }
 
-openssl=$(gh_api openssl/openssl/releases 2>&1 /dev/null | \
+openssl=$(gh_api openssl/openssl/releases | \
         jq -r '.[].tag_name' | \
         grep -vE "alpha|beta" | \
         cut -d'v' -f 2 |  \
         tr -d '[:alpha:][=-=]' | \
-        head -1)
+        sed -n 1p)
 
 curl=$(gh_api curl/curl/releases | \
         jq -r '.[0].tag_name' | \
