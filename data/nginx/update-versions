@@ -4,64 +4,71 @@ if ! command -v jq > /dev/null || ! command -v curl > /dev/null; then echo "Plea
 if [ "$#" -ne 1 ]; then echo "Containerfile param required" && exit 1; fi
 CONTAINERFILE=$1
 
-openssl=$(curl -s https://api.github.com/repos/openssl/openssl/releases 2>&1 /dev/null | \
+gh_api() {
+    curl -fsSL --retry 3 \
+         -H "Accept: application/vnd.github+json" \
+         ${GH_API_TOKEN:+-H "Authorization: Bearer $GH_API_TOKEN"} \
+         "https://api.github.com/repos/$1"
+}
+
+openssl=$(gh_api openssl/openssl/releases | \
         jq -r '.[].tag_name' | \
         grep -vE "alpha|beta" | \
         cut -d'v' -f 2 |  \
         tr -d '[:alpha:][=-=]' | \
-        head -1)
+        sed -n 1p)
 
-nginx=$(curl -s https://api.github.com/repos/nginx/nginx/releases | \
+nginx=$(gh_api nginx/nginx/releases | \
         jq -r '.[0].tag_name' | \
         cut -d'v' -f 2 | \
         tr -d '[:alpha:][=-=]')
 
-luajit=$(curl -s https://api.github.com/repos/openresty/luajit2/releases | \
+luajit=$(gh_api openresty/luajit2/releases | \
          jq -r '.[0].tag_name' | \
          cut -d'v' -f 2 | \
          tr -d '[:alpha:]')
 
-acme=$(curl -s https://api.github.com/repos/nginx/nginx-acme/releases | \
+acme=$(gh_api nginx/nginx-acme/releases | \
        jq -r '.[0].tag_name' | \
        cut -d'v' -f 2 | \
        tr -d '[:alpha:][=-=]')
 
-naxsi=$(curl -s https://api.github.com/repos/wargio/naxsi/releases | \
+naxsi=$(gh_api wargio/naxsi/releases | \
         jq -r '.[0].tag_name' | \
         cut -d'v' -f 2 | \
         tr -d '[:alpha:][=-=]')
 
-ndk=$(curl -s https://api.github.com/repos/vision5/ngx_devel_kit/releases | \
+ndk=$(gh_api vision5/ngx_devel_kit/releases | \
       jq -r '.[0].tag_name' | \
       cut -d'v' -f 2 | \
       tr -d '[:alpha:][=-=]')
 
-vts=$(curl -s https://api.github.com/repos/vozlt/nginx-module-vts/releases | \
+vts=$(gh_api vozlt/nginx-module-vts/releases | \
       jq -r '.[0].tag_name' | \
       cut -d'v' -f 2 | \
       tr -d '[:alpha:][=-=]')
 
-resty_core=$(curl -s https://api.github.com/repos/openresty/lua-resty-core/tags | \
+resty_core=$(gh_api openresty/lua-resty-core/tags | \
              jq -r '.[].name' | \
              grep -vi r | \
              cut -d'v' -f 2 | \
              tr -d '[:alpha:][=-=]' | \
-             head -1)
+             sed -n 1p)
 
 lua=$(curl -sfL "https://raw.githubusercontent.com/openresty/lua-resty-core/v${resty_core}/lib/resty/core/base.lua" | \
-      grep -m1 -oE 'ngx_http_lua_module [0-9]+\.[0-9]+\.[0-9]+' | \
-      awk '{print $2}')
+      grep -oE 'ngx_http_lua_module [0-9]+\.[0-9]+\.[0-9]+' | \
+      awk 'NR==1 {print $2}')
 
 if [ -z "$lua" ]; then
     echo "could not determine ngx_lua version required by lua-resty-core ${resty_core}" && exit 1
 fi
 
-resty_lru=$(curl -s https://api.github.com/repos/openresty/lua-resty-lrucache/tags | \
+resty_lru=$(gh_api openresty/lua-resty-lrucache/tags | \
             jq -r '.[].name' | \
             grep -vi r | \
             cut -d'v' -f 2 | \
             tr -d '[:alpha:][=-=]' | \
-            head -1)
+            sed -n 1p)
 
 echo "openssl=$openssl"
 echo "nginx=$nginx"
