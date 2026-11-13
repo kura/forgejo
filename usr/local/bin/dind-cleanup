@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DIND=${DIND:-dind_container}
+DIND_HOST=${DIND_HOST:-tcp://127.0.0.1:2375}
+MAX_AGE=${MAX_AGE:-$((6 * 3600))}
+KEEP_CACHE=${KEEP_CACHE:-72h}
+
+d() { docker exec -e DOCKER_HOST="$DIND_HOST" "$DIND" docker "$@"; }
+
+now=$(date +%s)
+live=0
+stale=()
+mapfile -t ids < <(d ps -aq --filter name=FORGEJO-ACTIONS-TASK- --filter name=GITEA-ACTIONS-TASK- --filter name=buildx_buildkit_)
+if ((${#ids[@]})); then
+    while read -r name created; do
+        if (( now - $(date -d "$created" +%s) > MAX_AGE )); then
+            stale+=("${name#/}")
+        else
+            live=1
+        fi
+    done < <(d inspect -f '{{.Name}} {{.Created}}' "${ids[@]}")
+fi
+
+if ((${#stale[@]})); then
+    echo "removing stale containers: ${stale[*]}"
+    d rm -f -v "${stale[@]}"
+fi
+
+if ((live)); then
+    echo "a job is running; skipping prune"
+    exit 0
+fi
+
+d container prune -f
+d volume prune -af
+d image prune -f
+d builder prune -af --filter "until=$KEEP_CACHE"
+d network prune -f
+d system df
+

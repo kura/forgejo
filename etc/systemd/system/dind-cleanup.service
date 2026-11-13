@@ -1,0 +1,11 @@
+[Unit]
+Description=Clean up leaked Forgejo Actions containers and volumes inside dind
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+Environment=DIND=dind_container
+Environment=DIND_HOST=tcp://127.0.0.1:2375
+ExecStart=/usr/local/bin/dind-cleanup
+
