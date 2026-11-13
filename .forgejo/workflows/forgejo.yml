@@ -19,8 +19,7 @@ jobs:
     container:
       image: data.forgejo.org/oci/node:24-alpine
     outputs:
-      version_amd64: ${{ steps.v.outputs.version_amd64 }}
-      version_arm64: ${{ steps.v.outputs.version_arm64 }}
+      version: ${{ steps.v.outputs.version }}
       versions_amd64: ${{ steps.v.outputs.versions_amd64 }}
       versions_arm64: ${{ steps.v.outputs.versions_arm64 }}
     steps:
@@ -41,7 +40,7 @@ jobs:
           versions=$(grep -E '^ENV [A-Z0-9_]+_VERSION=' data/forgejo/Containerfile | sha256sum | cut -d' ' -f1)
           [ -n "$version" ] || { echo "FORGEJO_VERSION not found"; exit 1; }
           echo "VERSION_ENV=$version" >> "$FORGEJO_ENV"
-          echo "version_${{ matrix.arch }}=$version" >> "$FORGEJO_OUTPUT"
+          echo "version=$version" >> "$FORGEJO_OUTPUT"
           echo "versions_${{ matrix.arch }}=$versions" >> "$FORGEJO_OUTPUT"
       - name: Setup Buildx
         uses: https://github.com/docker/setup-buildx-action@v4
@@ -57,7 +56,7 @@ jobs:
           registry: ghcr.io
           username: ${{ secrets.GH_USERNAME }}
           password: ${{ secrets.GH_PASSWORD }}
-      - name: Build and push ${{ matrix.arch }} image
+      - name: Build and push image
         uses: https://github.com/docker/build-push-action@v7
         with:
           platforms: linux/${{ matrix.arch }}
@@ -74,16 +73,16 @@ jobs:
     container:
       image: data.forgejo.org/oci/node:24-alpine
     env:
-      V_AMD64: ${{ needs.build.outputs.version_amd64 }}
-      V_ARM64: ${{ needs.build.outputs.version_arm64 }}
+      V: ${{ needs.build.outputs.version }}
       H_AMD64: ${{ needs.build.outputs.versions_amd64 }}
       H_ARM64: ${{ needs.build.outputs.versions_arm64 }}
     steps:
       - name: Check both legs built the same versions
         run: |
-          echo "amd64: $V_AMD64 $H_AMD64"
-          echo "arm64: $V_ARM64 $H_ARM64"
-          if [ -z "$V_AMD64" ] || [ -z "$H_AMD64" ] || [ "$V_AMD64" != "$V_ARM64" ] || [ "$H_AMD64" != "$H_ARM64" ]; then
+          echo "version: $V"
+          echo "amd64: $H_AMD64"
+          echo "arm64: $H_ARM64"
+          if [ -z "$V" ] || [ -z "$H_AMD64" ] || [ "$H_AMD64" != "$H_ARM64" ]; then
             echo "::error::matrix legs resolved different versions; not publishing :latest"
             exit 1
           fi
@@ -107,6 +106,6 @@ jobs:
         run: |
           for repo in git.kura.gg/kura/forgejo/forgejo ghcr.io/kura/forgejo/forgejo; do
             docker buildx imagetools create \
-              -t "$repo:$V_AMD64" -t "$repo:latest" \
-              "$repo:$V_AMD64-amd64" "$repo:$V_AMD64-arm64"
+              -t "$repo:$V" -t "$repo:latest" \
+              "$repo:$V-amd64" "$repo:$V-arm64"
           done
