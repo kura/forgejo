@@ -20,6 +20,8 @@ jobs:
         run: apk add docker-cli curl jq bash make
 
       - name: Update versions
+        env:
+          GH_API_TOKEN: ${{ secrets.GH_API_TOKEN }}
         run: |
              cd data/forgejo
              make update ./Containerfile
