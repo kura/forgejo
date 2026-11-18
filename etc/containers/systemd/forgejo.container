@@ -5,12 +5,12 @@ Description=Forgejo container
 Pod=forgejo.pod
 ContainerName=forgejo
 Image=git.kura.gg/kura/forgejo/forgejo:latest
-AutoUpdate=local
+AutoUpdate=registry
 
 Volume=/data/forgejo:/data
 
-Environment=PUID=1000
-Environment=PGID=1000
+Environment=USER_UID=1000
+Environment=USER_GID=1000
 Environment=TZ=Etc/UTC
 
 HealthCmd="curl --fail http://localhost:3000/api/healthz || exit 1"
